@@ -25,7 +25,12 @@ export function TransactionModal({ onClose, onSuccess }: Props) {
         amount: parseFloat(amount),
         type,
         category,
-        date: new Date(`${date}T00:00:00.000-03:00`).toISOString(),
+        date: (() => {
+          const now = new Date()
+          const isToday = date === now.toLocaleDateString('en-CA')
+          if (isToday) return new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString()
+          return new Date(`${date}T12:00:00.000-03:00`).toISOString()
+        })(),
       })
       onSuccess()
       onClose()
