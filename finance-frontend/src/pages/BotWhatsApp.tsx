@@ -49,7 +49,7 @@ export function BotWhatsApp() {
               <p className="text-white font-medium mb-1">Número vinculado!</p>
               <p className="text-gray-400 text-sm mb-4">Clique abaixo para abrir o bot no WhatsApp.</p>
               
-                <a href="https://wa.me/NUMERO_DO_CHIP_NOVO"
+                <a href="https://wa.me/5584999353322"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-green-500 text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-green-600">
