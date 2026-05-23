@@ -125,7 +125,7 @@ export async function handleMessage(sock: any, msg: any) {
         })
         return
       }
-      date = new Date(Number(year), Number(month) - 1, Number(day))
+      date = new Date(`${year}-${month}-${day}T00:00:00.000-03:00`)
     }
 
     try {
