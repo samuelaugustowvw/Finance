@@ -58,7 +58,8 @@ export async function handleMessage(sock: any, msg: any) {
 
   if (!text) return
 
-  const rawPhone = from.replace('@s.whatsapp.net', '').replace(/\D/g, '')
+  const remoteJidAlt = (msg.key as any).remoteJidAlt || ''
+  const rawPhone = (remoteJidAlt || from).replace('@s.whatsapp.net', '').replace(/\D/g, '')
   const phone = rawPhone.startsWith('55') ? rawPhone.slice(2) : rawPhone
   console.log('RAW PHONE:', rawPhone)
   console.log('PHONE AFTER STRIP:', phone)
