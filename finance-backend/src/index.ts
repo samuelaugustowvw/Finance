@@ -5,7 +5,7 @@ import authRoutes from './routes/auth'
 import transactionRoutes from './routes/transactions'
 
 const app = express()
-app.use(cors({ origin: 'http://localhost:5173' }))
+app.use(cors({ origin: '*' }))
 app.use(express.json())
 
 app.get('/health', (req, res) => res.json({ status: 'ok', app: 'Finance API' }))
