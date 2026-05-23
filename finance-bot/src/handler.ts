@@ -58,7 +58,8 @@ export async function handleMessage(sock: any, msg: any) {
 
   if (!text) return
 
-  const phone = from.replace('@s.whatsapp.net', '').replace(/\D/g, '')
+  const rawPhone = from.replace('@s.whatsapp.net', '').replace(/\D/g, '')
+  const phone = rawPhone.startsWith('55') ? rawPhone.slice(2) : rawPhone
   const user = await getUserByPhone(phone)
 
   if (!user) {
