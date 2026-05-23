@@ -46,24 +46,30 @@ export function Transactions() {
     loadTransactions()
   }
 
-  function downloadPDF() {
+  function downloadTXT() {
+    const pad = (str: string, len: number) => str.substring(0, len).padEnd(len)
+    
+    const header = `${pad('Data', 12)}| ${pad('Descrição', 30)}| ${pad('Categoria', 15)}| ${pad('Tipo', 10)}| Valor`
+    const divider = '-'.repeat(80)
+    
     const lines = filtered.map(t =>
-      `${new Date(t.date).toLocaleDateString('pt-BR')} | ${t.title} | ${t.category} | ${t.type === 'INCOME' ? '+' : '-'} ${fmt(t.amount)}`
+      `${pad(new Date(t.date).toLocaleDateString('pt-BR'), 12)}| ${pad(t.title, 30)}| ${pad(t.category, 15)}| ${pad(t.type === 'INCOME' ? 'Receita' : 'Despesa', 10)}| ${t.type === 'INCOME' ? '+' : '-'} ${fmt(t.amount)}`
     ).join('\n')
 
     const income = filtered.filter(t => t.type === 'INCOME').reduce((s, t) => s + t.amount, 0)
     const expense = filtered.filter(t => t.type === 'EXPENSE').reduce((s, t) => s + t.amount, 0)
 
     const content = `FINANCE — Transações de ${months[month - 1]} ${year}
-${'='.repeat(60)}
+  ${divider}
+  ${header}
+  ${divider}
+  ${lines || 'Nenhuma transação encontrada'}
+  ${divider}
+  Total Receitas:  ${fmt(income)}
+  Total Despesas:  ${fmt(expense)}
+  Saldo:           ${fmt(income - expense)}
+  `
 
-${lines || 'Nenhuma transação encontrada'}
-
-${'='.repeat(60)}
-Total Receitas:  ${fmt(income)}
-Total Despesas:  ${fmt(expense)}
-Saldo:           ${fmt(income - expense)}
-`
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -83,7 +89,7 @@ Saldo:           ${fmt(income - expense)}
             className="bg-gray-800 border border-gray-700 text-gray-300 rounded-lg px-3 py-1.5 text-sm outline-none">
             {months.map((m, i) => <option key={i} value={i + 1}>{m} {year}</option>)}
           </select>
-          <button onClick={downloadPDF}
+          <button onClick={downloadTXT}
             className="bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-700 flex items-center gap-1">
             ↓ Exportar
           </button>
