@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { Sidebar } from '../components/Sidebar'
+import { MobileMenu } from '../components/MobileMenu'
 import { TransactionModal } from '../components/TransactionModal'
 import { api } from '../lib/api'
 
@@ -26,6 +27,7 @@ export function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [allTransactions, setAllTransactions] = useState<Transaction[]>([])
   const [showModal, setShowModal] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const now = new Date()
   const [month, setMonth] = useState(now.getMonth() + 1)
   const [year] = useState(now.getFullYear())
@@ -80,22 +82,32 @@ export function Dashboard() {
 
   return (
     <div className="flex h-screen bg-gray-950 overflow-hidden">
-      <Sidebar />
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center gap-3">
+        <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center gap-3">
+          <button onClick={() => setMenuOpen(true)}
+            className="md:hidden text-gray-400 hover:text-white p-1">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
           <h1 className="text-white font-medium flex-1">Dashboard</h1>
           <select value={month} onChange={(e) => setMonth(Number(e.target.value))}
-            className="bg-gray-800 border border-gray-700 text-gray-300 rounded-lg px-3 py-1.5 text-sm outline-none">
+            className="bg-gray-800 border border-gray-700 text-gray-300 rounded-lg px-2 py-1.5 text-sm outline-none">
             {months.map((m, i) => <option key={i} value={i + 1}>{m} {year}</option>)}
           </select>
           <button onClick={() => setShowModal(true)}
-            className="bg-emerald-500 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-emerald-600 flex items-center gap-1">
-            + Nova transação
+            className="bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-emerald-600">
+            + <span className="hidden sm:inline">Nova transação</span>
           </button>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-5">
-          <div className="grid grid-cols-3 gap-4 mb-5">
+        <main className="flex-1 overflow-y-auto p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
               <p className="text-gray-400 text-xs mb-1">Saldo atual</p>
               <p className={`text-2xl font-medium ${balance >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmt(balance)}</p>
@@ -113,7 +125,7 @@ export function Dashboard() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
               <p className="text-gray-500 text-xs font-medium uppercase tracking-wider mb-3">Receitas vs Despesas</p>
               <ResponsiveContainer width="100%" height={140}>

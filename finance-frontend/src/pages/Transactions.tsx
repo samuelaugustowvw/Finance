@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Sidebar } from '../components/Sidebar'
+import { MobileMenu } from '../components/MobileMenu'
 import { TransactionModal } from '../components/TransactionModal'
 import { api } from '../lib/api'
 
@@ -24,6 +25,7 @@ const categoryColors: Record<string, string> = {
 export function Transactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [showModal, setShowModal] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const [filter, setFilter] = useState<'ALL' | 'INCOME' | 'EXPENSE'>('ALL')
   const now = new Date()
   const [month, setMonth] = useState(now.getMonth() + 1)
@@ -37,7 +39,6 @@ export function Transactions() {
   useEffect(() => { loadTransactions() }, [month])
 
   const filtered = transactions.filter(t => filter === 'ALL' ? true : t.type === filter)
-
   const fmt = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
   const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
 
@@ -49,28 +50,21 @@ export function Transactions() {
   function downloadPDF() {
     const pad = (str: string, len: number) => str.substring(0, len).padEnd(len)
     const divider = '='.repeat(75)
-
     const header = `${pad('Data', 12)}| ${pad('Descrição', 25)}| ${pad('Categoria', 15)}| ${pad('Tipo', 10)}| Valor`
-
     const lines = filtered.map(t =>
       `${pad(new Date(t.date).toLocaleDateString('pt-BR'), 12)}| ${pad(t.title, 25)}| ${pad(t.category, 15)}| ${pad(t.type === 'INCOME' ? 'Receita' : 'Despesa', 10)}| ${t.type === 'INCOME' ? '+' : '-'} ${fmt(t.amount)}`
     ).join('\n')
-
     const income = filtered.filter(t => t.type === 'INCOME').reduce((s, t) => s + t.amount, 0)
     const expense = filtered.filter(t => t.type === 'EXPENSE').reduce((s, t) => s + t.amount, 0)
-
     const content = [
       `FINANCE — Transações de ${months[month - 1]} ${year}`,
-      divider,
-      header,
-      divider,
+      divider, header, divider,
       lines || 'Nenhuma transação encontrada',
       divider,
       `Total Receitas:  ${fmt(income)}`,
       `Total Despesas:  ${fmt(expense)}`,
       `Saldo:           ${fmt(income - expense)}`,
     ].join('\n')
-
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -82,25 +76,35 @@ export function Transactions() {
 
   return (
     <div className="flex h-screen bg-gray-950 overflow-hidden">
-      <Sidebar />
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center gap-3">
+        <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center gap-2">
+          <button onClick={() => setMenuOpen(true)}
+            className="md:hidden text-gray-400 hover:text-white p-1">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
           <h1 className="text-white font-medium flex-1">Transações</h1>
           <select value={month} onChange={(e) => setMonth(Number(e.target.value))}
-            className="bg-gray-800 border border-gray-700 text-gray-300 rounded-lg px-3 py-1.5 text-sm outline-none">
+            className="bg-gray-800 border border-gray-700 text-gray-300 rounded-lg px-2 py-1.5 text-sm outline-none">
             {months.map((m, i) => <option key={i} value={i + 1}>{m} {year}</option>)}
           </select>
           <button onClick={downloadPDF}
-            className="bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-700 flex items-center gap-1">
-            ↓ Exportar
+            className="bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-700">
+            ↓
           </button>
           <button onClick={() => setShowModal(true)}
-            className="bg-emerald-500 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-emerald-600">
-            + Nova transação
+            className="bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-emerald-600">
+            +
           </button>
         </header>
 
-        <div className="px-5 py-3 border-b border-gray-800 flex gap-2">
+        <div className="px-4 py-3 border-b border-gray-800 flex gap-2 flex-wrap">
           {(['ALL', 'INCOME', 'EXPENSE'] as const).map(f => (
             <button key={f} onClick={() => setFilter(f)}
               className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -112,7 +116,7 @@ export function Transactions() {
           <span className="ml-auto text-gray-500 text-xs self-center">{filtered.length} transações</span>
         </div>
 
-        <main className="flex-1 overflow-y-auto p-5">
+        <main className="flex-1 overflow-y-auto p-4">
           {filtered.length === 0 ? (
             <p className="text-gray-600 text-sm text-center py-12">Nenhuma transação encontrada</p>
           ) : (
