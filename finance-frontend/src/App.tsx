@@ -14,7 +14,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
-        <Route path="/bot-whatsapp" element={<PrivateRoute><BotWhatsApp /></PrivateRoute>} />
+        <Route path="/whatsapp" element={<PrivateRoute><BotWhatsApp /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
