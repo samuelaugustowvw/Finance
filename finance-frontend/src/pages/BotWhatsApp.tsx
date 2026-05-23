@@ -89,18 +89,6 @@ export function BotWhatsApp() {
                 </button>
               </form>
             )}
-
-            <div className="mt-6 p-4 bg-gray-800 rounded-xl">
-              <p className="text-gray-400 text-xs font-medium uppercase tracking-wider mb-2">Comandos disponíveis</p>
-              <div className="flex flex-col gap-1">
-                <p className="text-gray-300 text-xs font-mono">-500 Mercado :Alimentação</p>
-                <p className="text-gray-300 text-xs font-mono">+4500 Salário :Receita</p>
-                <p className="text-gray-300 text-xs font-mono">-500 Mercado :Alimentação #25/04/2026</p>
-                <p className="text-gray-300 text-xs font-mono">!saldo</p>
-                <p className="text-gray-300 text-xs font-mono">!transações</p>
-                <p className="text-gray-300 text-xs font-mono">!help</p>
-              </div>
-            </div>
           </div>
         </main>
       </div>
