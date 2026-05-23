@@ -64,5 +64,25 @@ router.get('/by-phone/:phone', async (req: Request, res: Response) => {
   )
   res.json({ id: user.id, name: user.name, token })
 })
+router.post('/link-phone', async (req: Request, res: Response) => {
+  const { phone } = req.body
+  const authHeader = req.headers.authorization
+  if (!authHeader) return res.status(401).json({ error: 'Token não fornecido' })
+  const token = authHeader.split(' ')[1]
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: string }
+    const existing = await prisma.user.findUnique({ where: { phone } })
+    if (existing && existing.id !== decoded.userId) {
+      return res.status(409).json({ error: 'Número já vinculado a outra conta' })
+    }
+    const user = await prisma.user.update({
+      where: { id: decoded.userId },
+      data: { phone },
+    })
+    res.json({ message: 'Número vinculado com sucesso!', phone: user.phone })
+  } catch {
+    return res.status(401).json({ error: 'Token inválido' })
+  }
+})
 
 export default router
