@@ -64,10 +64,13 @@ export async function handleMessage(sock: any, msg: any) {
   const remoteJidAlt = (msg.key as any).remoteJidAlt || ''
   const rawPhone = (remoteJidAlt || from).replace('@s.whatsapp.net', '').replace(/\D/g, '')
   const phone = rawPhone.startsWith('55') ? rawPhone.slice(2) : rawPhone
-  console.log('RAW PHONE:', rawPhone)
-  console.log('PHONE AFTER STRIP:', phone)
-  console.log('API_URL:', API_URL)
-  const user = await getUserByPhone(phone)
+
+  const user = await getUserByPhone(phone) ||
+  await getUserByPhone(
+    phone.length === 10
+      ? phone.slice(0, 2) + '9' + phone.slice(2)
+      : phone.slice(0, 2) + phone.slice(3)
+  )
 
   if (!user) {
     await sock.sendMessage(from, {
