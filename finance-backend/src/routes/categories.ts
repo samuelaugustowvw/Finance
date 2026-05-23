@@ -12,7 +12,7 @@ const defaultCategories = [
   { name: 'Lazer', color: '#7F77DD' },
   { name: 'Transporte', color: '#EF9F27' },
   { name: 'Saúde', color: '#E24B4A' },
-  { name: 'Outros', color: '#888780' },
+  { name: 'Receita', color: '#22C55E' },
 ]
 
 router.get('/', async (req: AuthRequest, res: Response) => {
