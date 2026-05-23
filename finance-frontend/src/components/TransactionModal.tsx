@@ -25,7 +25,7 @@ export function TransactionModal({ onClose, onSuccess }: Props) {
         amount: parseFloat(amount),
         type,
         category,
-        date: new Date(date).toISOString(),
+        date: new Date(`${date}T00:00:00.000-03:00`).toISOString(),
       })
       onSuccess()
       onClose()
