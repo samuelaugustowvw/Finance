@@ -71,7 +71,7 @@ export async function handleMessage(sock: any, msg: any) {
 
   if (!user) {
     await sock.sendMessage(from, {
-      text: '❌Parece que você ainda não tem uma conta no Finance. Cria uma em: https://finance.example.com/register'
+      text: '❌Parece que você ainda não tem uma conta no Finance. Cria uma em: https://finance-sa-website.vercel.app'
     })
     return
   }
