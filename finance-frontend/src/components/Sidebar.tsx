@@ -42,7 +42,7 @@ export function Sidebar() {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: '▦' },
     { path: '/transactions', label: 'Transações', icon: '⇄' },
-    { path: '/whatsapp', label: 'Bot WhatsApp', icon: null, disabled: true },
+    { path: '/whatsapp', label: 'Bot WhatsApp', icon: null, disabled: false },
   ]
 
   return (
