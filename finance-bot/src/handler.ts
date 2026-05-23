@@ -7,6 +7,9 @@ const HELP_MESSAGE = `*Finance Bot* 💰
 *Adicionar transação:*
 -Valor Nome :Categoria
 +Valor Nome :Categoria
+ou
+-Valor Nome :Categoria :Data
++Valor Nome :Categoria :Data
 
 *Consultas:*
 !saldo — ver saldo do mês
@@ -15,7 +18,7 @@ const HELP_MESSAGE = `*Finance Bot* 💰
 
 *Exemplos:*
 -120.00 Combustível :Transporte
-+1500 Freelance :Receita
++1500 Freelance :Receita :15/12/2024
 -89.90 Netflix :Lazer`
 
 const WELCOME_MESSAGE = `Olá! Bem-vindo ao *Finance Bot* 💸
@@ -104,16 +107,22 @@ export async function handleMessage(sock: any, msg: any) {
     return
   }
 
-  const match = text.match(/^([+-])(\d+(?:[.,]\d{1,2})?)\s+(.+?)\s*:(.+)$/)
+  const match = text.match(/^([+-])(\d+(?:[.,]\d{1,2})?)\s+(.+?)\s*:([^:]+)(?:\s*:(\d{2}\/\d{2}\/\d{4}))?$/)
   if (match) {
     const type = match[1] === '+' ? 'INCOME' : 'EXPENSE'
     const amount = parseFloat(match[2].replace(',', '.'))
     const title = match[3].trim()
     const category = match[4].trim()
+    const dateStr = match[5]
+    let date = new Date()
+    if (dateStr) {
+      const [day, month, year] = dateStr.split('/')
+      date = new Date(Number(year), Number(month) - 1, Number(day))
+    }
     try {
-      await addTransaction(user.token, { title, amount, type, category })
+      await addTransaction(user.token, { title, amount, type, category, date: date.toISOString() })
       await sock.sendMessage(from, {
-        text: `✅ Transação salva!\n\n${type === 'INCOME' ? '🟢 Receita' : '🔴 Despesa'}: *${fmt(amount)}*\nDescrição: ${title}\nCategoria: ${category}`
+        text: `✅ Transação salva!\n\n${type === 'INCOME' ? '🟢 Receita' : '🔴 Despesa'}: *${fmt(amount)}*\nDescrição: ${title}\nCategoria: ${category}\nData: ${date.toLocaleDateString('pt-BR')}`
       })
     } catch {
       await sock.sendMessage(from, { text: '❌ Erro ao salvar. Tente novamente.' })
