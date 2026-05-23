@@ -4,6 +4,7 @@ import { z } from 'zod'
 import prisma from '../lib/prisma'
 import { authGuard, AuthRequest } from '../middlewares/authGuard'
 
+
 const router = Router()
 router.use(authGuard)
 

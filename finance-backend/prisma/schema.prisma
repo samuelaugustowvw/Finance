@@ -15,6 +15,7 @@ model User {
   phone        String?       @unique
   createdAt    DateTime      @default(now())
   transactions Transaction[]
+  categories   Category[]
 }
 
 model Transaction {
@@ -27,6 +28,15 @@ model Transaction {
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  color     String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 enum Type {
