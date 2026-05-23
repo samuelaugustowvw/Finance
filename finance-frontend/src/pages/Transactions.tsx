@@ -47,13 +47,11 @@ export function Transactions() {
   }
 
   function downloadPDF() {
-    const pad = (str: string, len: number) => str.substring(0, len).padEnd(len)
-
-    const header = `${pad('Data', 12)}| ${pad('Descrição', 25)}| ${pad('Categoria', 15)}| ${pad('Tipo', 10)}| Valor`
+    const header = `${'Data'.padEnd(12)}| ${'Descrição'.padEnd(25)}| ${'Categoria'.padEnd(15)}| ${'Tipo'.padEnd(10)}| Valor`
     const divider = '='.repeat(75)
 
     const lines = filtered.map(t =>
-      `${pad(new Date(t.date).toLocaleDateString('pt-BR'), 12)}| ${pad(t.title, 25)}| ${pad(t.category, 15)}| ${pad(t.type === 'INCOME' ? 'Receita' : 'Despesa', 10)}| ${t.type === 'INCOME' ? '+' : '-'} ${fmt(t.amount)}`
+      `${new Date(t.date).toLocaleDateString('pt-BR').padEnd(12)}| ${t.title.substring(0, 25).padEnd(25)}| ${t.category.substring(0, 15).padEnd(15)}| ${(t.type === 'INCOME' ? 'Receita' : 'Despesa').padEnd(10)}| ${t.type === 'INCOME' ? '+' : '-'} ${fmt(t.amount)}`
     ).join('\n')
 
     const income = filtered.filter(t => t.type === 'INCOME').reduce((s, t) => s + t.amount, 0)
