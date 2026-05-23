@@ -47,26 +47,30 @@ export function Transactions() {
   }
 
   function downloadPDF() {
-    const header = `${'Data'.padEnd(12)}| ${'Descrição'.padEnd(25)}| ${'Categoria'.padEnd(15)}| ${'Tipo'.padEnd(10)}| Valor`
+    const pad = (str: string, len: number) => str.substring(0, len).padEnd(len)
     const divider = '='.repeat(75)
 
+    const header = `${pad('Data', 12)}| ${pad('Descrição', 25)}| ${pad('Categoria', 15)}| ${pad('Tipo', 10)}| Valor`
+
     const lines = filtered.map(t =>
-      `${new Date(t.date).toLocaleDateString('pt-BR').padEnd(12)}| ${t.title.substring(0, 25).padEnd(25)}| ${t.category.substring(0, 15).padEnd(15)}| ${(t.type === 'INCOME' ? 'Receita' : 'Despesa').padEnd(10)}| ${t.type === 'INCOME' ? '+' : '-'} ${fmt(t.amount)}`
+      `${pad(new Date(t.date).toLocaleDateString('pt-BR'), 12)}| ${pad(t.title, 25)}| ${pad(t.category, 15)}| ${pad(t.type === 'INCOME' ? 'Receita' : 'Despesa', 10)}| ${t.type === 'INCOME' ? '+' : '-'} ${fmt(t.amount)}`
     ).join('\n')
 
     const income = filtered.filter(t => t.type === 'INCOME').reduce((s, t) => s + t.amount, 0)
     const expense = filtered.filter(t => t.type === 'EXPENSE').reduce((s, t) => s + t.amount, 0)
 
-    const content = `FINANCE — Transações de ${months[month - 1]} ${year}
-  ${divider}
-  ${header}
-  ${divider}
-  ${lines || 'Nenhuma transação encontrada'}
-  ${divider}
-  Total Receitas:  ${fmt(income)}
-  Total Despesas:  ${fmt(expense)}
-  Saldo:           ${fmt(income - expense)}
-  `
+    const content = [
+      `FINANCE — Transações de ${months[month - 1]} ${year}`,
+      divider,
+      header,
+      divider,
+      lines || 'Nenhuma transação encontrada',
+      divider,
+      `Total Receitas:  ${fmt(income)}`,
+      `Total Despesas:  ${fmt(expense)}`,
+      `Saldo:           ${fmt(income - expense)}`,
+    ].join('\n')
+
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
